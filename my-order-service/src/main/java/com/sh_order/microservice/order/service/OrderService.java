@@ -1,5 +1,6 @@
 package com.sh_order.microservice.order.service;
 
+import com.sh_order.microservice.order.client.InventoryClient;
 import com.sh_order.microservice.order.dto.OrderRequest;
 import com.sh_order.microservice.order.model.Order;
 import com.sh_order.microservice.order.repository.OrderRepository;
@@ -15,10 +16,17 @@ import java.util.UUID;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final InventoryClient inventoryClient;
 
     public void placeOrder(OrderRequest orderRequest) {
-        var order = mapToOrder(orderRequest);
-        orderRepository.save(order);
+        //calling inventory service here to check stock availability
+        boolean inStock = inventoryClient.isInStock(orderRequest.skuCode(), orderRequest.quantity());
+        if(inStock){
+            var order = mapToOrder(orderRequest);
+            orderRepository.save(order);
+        }else{
+            throw new RuntimeException("Product with skucode " + orderRequest.skuCode() + "is not in stock");
+        }
     }
 
     private static Order mapToOrder(OrderRequest orderRequest) {

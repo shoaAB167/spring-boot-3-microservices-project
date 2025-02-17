@@ -2,12 +2,13 @@ version: '3.8'
 services:
   mysql:
     image: mysql:8.0
-    container_name: mysql
+    container_name: mysql_order
     environment:
       MYSQL_ROOT_PASSWORD: mysql  # Password for root user
-      MYSQL_DATABASE: order_service  # Create your initial database
     ports:
       - "3307:3306"
     volumes:
       - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./mysql/data:/var/lib/mysql
+
+

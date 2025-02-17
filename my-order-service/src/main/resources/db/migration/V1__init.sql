@@ -1,3 +1,4 @@
+--we are not using flyway so this code this not used
 CREATE TABLE `t_orders`
 (
     `id`          bigint(20) NOT NULL AUTO_INCREMENT,
