@@ -5,7 +5,7 @@ target/
 !**/src/test/**/target/
 
 docker
-volume-data
+/volume-data
 
 ### STS ###
 .apt_generated
