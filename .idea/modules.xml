@@ -2,6 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/api-gateway/api-gateway.iml" filepath="$PROJECT_DIR$/api-gateway/api-gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/my-inventory-service/inventory-service.iml" filepath="$PROJECT_DIR$/my-inventory-service/inventory-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/my-order-service/my-order-service.iml" filepath="$PROJECT_DIR$/my-order-service/my-order-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/my-product-service/my-product-service.iml" filepath="$PROJECT_DIR$/my-product-service/my-product-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/spring-boot-3-microservices-project.iml" filepath="$PROJECT_DIR$/.idea/spring-boot-3-microservices-project.iml" />
     </modules>
   </component>
