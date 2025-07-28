@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.sh-inventory.microservice.inventoryservice</groupId>
-	<artifactId>inventory-service</artifactId>
+	<artifactId>my-inventory-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Inventory Service</name>
 	<description>Inventory service of microservices project</description>
