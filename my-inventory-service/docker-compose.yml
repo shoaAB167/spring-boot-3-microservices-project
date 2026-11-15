@@ -1,16 +1,14 @@
-version: '3.8'
+# inventory-service's own MySQL (database-per-service: order-service has a separate one).
+# init.sql creates the inventory_service database; Flyway then creates the tables.
+# Password is a LOCAL DEV default (override with env vars / .env).
 services:
-  mysql:
+  mysql-inventory:
     image: mysql:8.0
     container_name: mysql_inventory
     environment:
-      MYSQL_ROOT_PASSWORD: mysql  # Password for root user
+      MYSQL_ROOT_PASSWORD: ${INVENTORY_DB_PASSWORD:-mysql}
     ports:
       - "3308:3306"
     volumes:
       - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./mysql/data:/var/lib/mysql
-
-
-#This is inventory service mysql container
-#Create init.sql to create database initially

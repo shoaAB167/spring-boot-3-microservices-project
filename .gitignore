@@ -1,2 +1,15 @@
+# Build output
+target/
+
+# Local secrets: put MAIL_USERNAME, MAIL_PASSWORD, etc. in .env (never committed)
+.env
+*.env.local
+
+# Runtime data written by Docker containers (bind-mounted volumes)
 /api-gateway/volume-data
+/api-gateway/docker/tempo/tempo-data/
+/my-order-service/mysql/
+/my-inventory-service/mysql/
+/my-product-service/data/
+
 /jre

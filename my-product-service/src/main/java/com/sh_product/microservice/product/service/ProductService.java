@@ -18,23 +18,20 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     public ProductResponse createProduct(ProductRequest productRequest) {
-        //for records you dont need to write getter and setters
         Product product = Product.builder()
                 .name(productRequest.name())
                 .description(productRequest.description())
                 .price(productRequest.price())
                 .build();
 
-        productRepository.save(product);
-        log.info("Product {} is saved", product.getId());
-        return new ProductResponse(product.getId(), product.getName(),
-                product.getDescription(), product.getPrice());
+        // Use the instance save() returns: that is the contract, and it carries the generated id.
+        Product saved = productRepository.save(product);
+        log.info("Product {} is saved", saved.getId());
+        return mapToProductResponse(saved);
     }
 
     public List<ProductResponse> getAllProducts() {
-        List<Product> products = productRepository.findAll();
-
-        return products.stream().map(this::mapToProductResponse).toList();
+        return productRepository.findAll().stream().map(this::mapToProductResponse).toList();
     }
 
     private ProductResponse mapToProductResponse(Product product) {

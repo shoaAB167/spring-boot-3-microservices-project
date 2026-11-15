@@ -1,17 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Aggregator POM.
+
+  This file only lists the modules so that `mvn clean verify` at the repo root builds
+  every service in one go. Each service is an independent Spring Boot application with
+  its own parent (spring-boot-starter-parent), so nothing here is inherited by them.
+
+  SECURITY NOTE: an earlier version of this file contained a Docker Hub access token.
+  Never put credentials in a POM. To publish images, log in once with
+  `docker login` and run `mvn spring-boot:build-image` + `docker push`
+  (see docs/AUDIT.md, finding SEC-1).
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.4</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
-    <groupId>com</groupId>
+
+    <groupId>com.sh</groupId>
     <artifactId>spring-boot-3-microservices</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>spring-boot-3-microservices</name>
+
     <modules>
         <module>api-gateway</module>
         <module>my-product-service</module>
@@ -19,40 +28,4 @@
         <module>my-inventory-service</module>
         <module>notification-service</module>
     </modules>
-
-    <properties>
-        <java.version>21</java.version>
-        <spring-cloud.version>2023.0.1</spring-cloud.version>
-        <dockerPassword>dckr_pat_9ox24_Apo-JmV38T4L-emNb_S5Q</dockerPassword>
-    </properties>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <image>
-                        <name>shoaib167/${project.artifactId}</name>
-                        <builder>paketobuildpacks/builder-jammy-base</builder>
-                        <publish>true</publish>
-                        <env>
-                            <BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>
-                        </env>
-                    </image>
-                    <docker>
-                        <publishRegistry>
-                            <username>shoaib167</username>
-                            <password>${dockerPassword}</password>
-                        </publishRegistry>
-                    </docker>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

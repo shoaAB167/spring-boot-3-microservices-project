@@ -12,11 +12,18 @@ import org.testcontainers.containers.MongoDBContainer;
 
 import java.math.BigDecimal;
 
+/** Runs the real app against a real MongoDB in Docker (Testcontainers). */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class MyProductServiceApplicationTests {
 
+	// @ServiceConnection: Spring Boot reads the container's host/port and overrides
+	// spring.data.mongodb.uri, so no test properties file is needed.
 	@ServiceConnection
 	static MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:7.0.7");
+
+	static {
+		mongoDBContainer.start();
+	}
 
 	@LocalServerPort
 	private Integer port;
@@ -27,13 +34,9 @@ class MyProductServiceApplicationTests {
 		RestAssured.port = port;
 	}
 
-	static {
-		mongoDBContainer.start();
-	}
-
 	@Test
 	void shouldCreateProduct() {
-		ProductRequest productRequest = getProductRequest();
+		ProductRequest productRequest = new ProductRequest("iPhone 16", "my iPhone 16", BigDecimal.valueOf(65000));
 
 		RestAssured.given()
 				.contentType("application/json")
@@ -41,7 +44,7 @@ class MyProductServiceApplicationTests {
 				.when()
 				.post("/api/product")
 				.then()
-				.log().all()
+				.log().ifValidationFails()
 				.statusCode(201)
 				.body("id", Matchers.notNullValue())
 				.body("name", Matchers.equalTo(productRequest.name()))
@@ -49,8 +52,17 @@ class MyProductServiceApplicationTests {
 				.body("price", Matchers.is(productRequest.price().intValueExact()));
 	}
 
-	private ProductRequest getProductRequest() {
-		return new ProductRequest("iPhone 16", "my iPhone 16", BigDecimal.valueOf(65000));
+	@Test
+	void shouldRejectProductWithoutNameOrWithNegativePrice() {
+		RestAssured.given()
+				.contentType("application/json")
+				.body("""
+						{ "name": "", "price": -10 }
+						""")
+				.when()
+				.post("/api/product")
+				.then()
+				.statusCode(400)
+				.contentType("application/problem+json");
 	}
 }
-

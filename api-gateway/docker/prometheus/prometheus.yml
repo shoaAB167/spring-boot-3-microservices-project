@@ -2,32 +2,37 @@ global:
   scrape_interval: 2s
   evaluation_interval: 2s
 
+# Each job pulls /actuator/prometheus from one service every 2 seconds ("pull" model).
+# host.docker.internal = the machine running Docker; fine for local demos only. In
+# Kubernetes you would use service discovery instead of fixed targets.
 scrape_configs:
   - job_name: 'api-gateway'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['host.docker.internal:9090']
+      - targets: ['host.docker.internal:9000'] # was 9090 = Prometheus scraping itself
+        labels:
+          application: "API Gateway"
   - job_name: 'product-service'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['host.docker.internal:8080'] ## only for demo purposes don't use host.docker.internal in production
+      - targets: ['host.docker.internal:8080']
         labels:
           application: "Product Service"
   - job_name: 'order-service'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['host.docker.internal:8081'] ## only for demo purposes don't use host.docker.internal in production
+      - targets: ['host.docker.internal:8081']
         labels:
           application: "Order Service"
   - job_name: 'inventory-service'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: [ 'host.docker.internal:8082' ] ## only for demo purposes don't use host.docker.internal in production
+      - targets: ['host.docker.internal:8082']
         labels:
           application: "Inventory Service"
   - job_name: 'notification-service'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: [ 'host.docker.internal:8083' ] ## only for demo purposes don't use host.docker.internal in production
+      - targets: ['host.docker.internal:8083']
         labels:
           application: "Notification Service"

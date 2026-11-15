@@ -1,4 +1,4 @@
-version: '4'
+# product-service's MongoDB. Credentials are LOCAL DEV defaults (override with env vars / .env).
 services:
   mongo:
     image: mongo:7.0.5
@@ -6,8 +6,8 @@ services:
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME:-root}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-password}
       MONGO_INITDB_DATABASE: product-service
     volumes:
       - ./data:/data/db
