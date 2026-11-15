@@ -1,28 +1,20 @@
-#version: '3.8'
-#services:
-#  mysql:
-#    image: mysql:8.0
-#    container_name: mysql_order
-#    environment:
-#      MYSQL_ROOT_PASSWORD: mysql  # Password for root user
-#    ports:
-#      - "3307:3306"
-#    volumes:
-#      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
-#      - ./mysql/data:/var/lib/mysql
-
-version: '4'
+# order-service infrastructure: its own MySQL database + the Kafka stack shared with
+# notification-service. Passwords are LOCAL DEV defaults (override with env vars / .env).
+#
+# Service names must be unique across the repo because the root docker-compose.yml
+# "include"s every file (hence "mysql-order", not "mysql").
 services:
-  mysql:
+  mysql-order:
     image: mysql:8.3.0
     container_name: mysql_order
     environment:
-      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_ROOT_PASSWORD: ${ORDER_DB_PASSWORD:-mysql}
     ports:
       - "3307:3306"
     volumes:
       - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./mysql/data:/var/lib/mysql
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     hostname: zookeeper
@@ -44,6 +36,9 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      # Two listeners: containers talk to "broker:29092", apps on the host use "localhost:9092".
+      # The broker hands these addresses back to clients, so each must be reachable from
+      # where that client runs. This is the most common Kafka-in-Docker mistake.
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -60,16 +55,17 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'broker:29092'
       SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8081
+
   kafka-ui:
     container_name: kafka-ui
-    image: provectuslabs/kafka-ui:latest
+    image: provectuslabs/kafka-ui:v0.7.2
     ports:
       - "8086:8080"
     depends_on:
       - broker
       - schema-registry
     environment:
-      KAFKA_CLUSTERS_NAME: local
-      KAFKA_CLUSTERS_BOOTSTRAPSERVERS: broker:29092
-      KAFKA_CLUSTERS_SCHEMAREGISTRY: http://schema-registry:8081
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker:29092
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry:8081
       DYNAMIC_CONFIG_ENABLED: 'true'

@@ -6,13 +6,15 @@ import org.springframework.context.annotation.Bean;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
+/** Used by TestMyOrderServiceApplication to run the app locally against a throwaway MySQL. */
 @TestConfiguration(proxyBeanMethods = false)
 class TestcontainersConfiguration {
 
 	@Bean
 	@ServiceConnection
 	MySQLContainer<?> mysqlContainer() {
-		return new MySQLContainer<>(DockerImageName.parse("mysql:latest"));
+		// Pinned: "latest" changes underneath you and makes builds non-reproducible.
+		return new MySQLContainer<>(DockerImageName.parse("mysql:8.3.0"));
 	}
 
 }

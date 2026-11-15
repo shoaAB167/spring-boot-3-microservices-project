@@ -1,0 +1,21 @@
+{
+  "realm": "spring-microservices-shoaib",
+  "enabled": true,
+  "sslRequired": "external",
+  "accessTokenLifespan": 300,
+  "clients": [
+    {
+      "clientId": "api-gateway-client",
+      "name": "API Gateway machine-to-machine client",
+      "description": "Confidential client for the client_credentials grant. Keycloak generates the secret on import; copy it from Clients > api-gateway-client > Credentials.",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false
+    }
+  ]
+}

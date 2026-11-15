@@ -1,0 +1,11 @@
+# One command to start ALL infrastructure:   docker compose up -d
+# (databases, Kafka + Schema Registry + Kafka UI, Keycloak, Loki/Prometheus/Tempo/Grafana)
+#
+# Each service keeps its own compose file next to its code (so it still works on its own);
+# this file just includes them. Relative paths inside each file resolve from that file's folder.
+# Requires Docker Compose v2.20+.
+include:
+  - my-product-service/docker-compose.yml
+  - my-order-service/docker-compose.yml
+  - my-inventory-service/docker-compose.yml
+  - api-gateway/docker-compose.yml

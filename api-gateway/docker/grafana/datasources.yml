@@ -1,5 +1,10 @@
 apiVersion: 1
 
+# Grafana data sources, provisioned automatically at start-up.
+# The links between them are what make observability useful:
+#   Prometheus exemplar --> Tempo trace   (exemplarTraceIdDestinations)
+#   Tempo trace         --> Loki logs     (tracesToLogs)
+#   Loki log line       --> Tempo trace   (derivedFields, regex on the trace id)
 datasources:
   - name: Prometheus
     type: prometheus
@@ -41,7 +46,10 @@ datasources:
     apiVersion: 1
     jsonData:
       derivedFields:
+        # Log lines contain "[app-name,traceId,spanId]" (logging.pattern.correlation in each
+        # service). The old regex "\[.+,(.+?)," was greedy, so a message containing commas
+        # captured the wrong text. This one only captures a 16/32 hex-character trace id.
         - datasourceUid: tempo
-          matcherRegex: \[.+,(.+?),
+          matcherRegex: \[[^\],\s]+,([0-9a-f]{16,32}),[0-9a-f]+\]
           name: TraceID
           url: $${__value.raw}
